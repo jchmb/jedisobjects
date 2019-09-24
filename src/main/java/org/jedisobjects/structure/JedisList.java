@@ -30,8 +30,10 @@ public class JedisList<E> extends JedisObject implements List<E> {
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		// TODO Auto-generated method stub
-		return false;
+		String[] values = (String[]) c.stream()
+			.map(e -> serializer.serialize(e))
+			.toArray();
+		return jedis.rpush(key, values) > 0L;
 	}
 
 	@Override
@@ -59,25 +61,31 @@ public class JedisList<E> extends JedisObject implements List<E> {
 
 	@Override
 	public E get(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		if (index < 0 || index >= size()) {
+			throw new IndexOutOfBoundsException();
+		}
+		return serializer.deserialize(jedis.lindex(key, index));
 	}
 
 	@Override
 	public int indexOf(Object o) {
-		// TODO Auto-generated method stub
-		return 0;
+		return jedis.lrange(key, 0, -1).indexOf(o);
 	}
 
 	@Override
 	public boolean isEmpty() {
 		return size() == 0;
 	}
+	
+	private List<String> getRawList() {
+		return jedis.lrange(key, 0, -1);
+	}
 
 	@Override
 	public Iterator<E> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRawList().stream()
+			.map(s -> serializer.deserialize(s))
+			.iterator();
 	}
 
 	@Override
@@ -124,8 +132,15 @@ public class JedisList<E> extends JedisObject implements List<E> {
 
 	@Override
 	public E set(int index, E element) {
-		// TODO Auto-generated method stub
-		return null;
+		if (element == null) {
+			throw new NullPointerException();
+		}
+		if (index < 0 || index >= size()) {
+			throw new IndexOutOfBoundsException();
+		}
+		E previousElement = get(index);
+		jedis.lset(key, index, serializer.serialize(element));
+		return previousElement;
 	}
 
 	@Override
@@ -135,8 +150,7 @@ public class JedisList<E> extends JedisObject implements List<E> {
 
 	@Override
 	public List<E> subList(int fromIndex, int toIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // TODO
 	}
 
 	@Override

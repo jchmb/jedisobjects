@@ -1,5 +1,10 @@
 package org.jedisobjects.serializer;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 public class StringSerializer implements Serializer<String> {
 	public static final StringSerializer INSTANCE = new StringSerializer();
 	
@@ -12,5 +17,4 @@ public class StringSerializer implements Serializer<String> {
 	public String deserialize(String s) {
 		return s;
 	}
-
 }

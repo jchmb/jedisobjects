@@ -1,7 +1,6 @@
 package org.jedisobjects.tests.structure;
 
 import org.jedisobjects.serializer.Serializer;
-import org.jedisobjects.serializer.StringSerializer;
 import org.jedisobjects.structure.JedisAtom;
 import org.junit.Test;
 
