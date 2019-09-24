@@ -24,7 +24,7 @@ public class JedisAtomTest extends TestCase {
 	
 	@Test
 	public void testJedisAtom() {
-		String key = "test:dummy";
+		String key = "test:atom:dummy";
 		JedisAtom<String> atom = new JedisAtom<>(jedis, key, Serializer.forString());
 		
 		/* Assert key doesn't already exist. */
