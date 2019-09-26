@@ -1,8 +1,11 @@
 package nl.jchmb.jedisobjects.structure;
 
+import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import nl.jchmb.jedisobjects.serializer.Serializer;
 import redis.clients.jedis.Jedis;
@@ -11,7 +14,7 @@ public class JedisMap<F, V> extends JedisObject implements Map<F, V> {
 	private final Serializer<F> fieldSerializer;
 	private final Serializer<V> valueSerializer;
 	
-	public JedisMap(Jedis jedis, String key, Serializer<F> fieldSerializer, Serializer<V> valueSerializer) {
+	public JedisMap(Jedis jedis, byte[] key, Serializer<F> fieldSerializer, Serializer<V> valueSerializer) {
 		super(jedis, key);
 		this.fieldSerializer = fieldSerializer;
 		this.valueSerializer = valueSerializer;
@@ -23,28 +26,42 @@ public class JedisMap<F, V> extends JedisObject implements Map<F, V> {
 	}
 
 	@Override
-	public boolean containsKey(Object key) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean containsKey(Object field) {
+		try {
+			byte[] s = fieldSerializer.trySerialize(field);
+			return jedis.hexists(key, s);
+		} catch (ClassCastException e) {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			byte[] s = valueSerializer.trySerialize(value);
+			return jedis.hvals(key).contains(s);
+		} catch (ClassCastException e) {
+			return false;
+		}
 	}
 
 	@Override
 	public Set<Entry<F, V>> entrySet() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRawMap().entrySet().stream()
+				.map(
+						entry -> new AbstractMap.SimpleImmutableEntry<F, V>(
+								fieldSerializer.deserialize(entry.getKey()),
+								valueSerializer.deserialize(entry.getValue())
+						)
+				)
+				.collect(Collectors.toSet());
 	}
 
 	@Override
 	public V get(Object field) {
 		try {
-			String serializedField = fieldSerializer.trySerialize(field);
-			String serializedValue = jedis.hget(key, serializedField);
+			byte[] serializedField = fieldSerializer.trySerialize(field);
+			byte[] serializedValue = jedis.hget(key, serializedField);
 			if (serializedValue == null) {
 				return null;
 			}
@@ -61,8 +78,9 @@ public class JedisMap<F, V> extends JedisObject implements Map<F, V> {
 
 	@Override
 	public Set<F> keySet() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRawKeys().stream()
+				.map(s -> fieldSerializer.deserialize(s))
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -74,14 +92,28 @@ public class JedisMap<F, V> extends JedisObject implements Map<F, V> {
 
 	@Override
 	public void putAll(Map<? extends F, ? extends V> m) {
-		// TODO Auto-generated method stub
-		
+		// TODO: write optimized version
+		for (Entry<? extends F, ? extends V> entry : m.entrySet()) {
+			put(entry.getKey(), entry.getValue());
+		}
 	}
 
 	@Override
-	public V remove(Object key) {
-		// TODO Auto-generated method stub
-		return null;
+	public V remove(Object field) {
+		try {
+			byte[] s = fieldSerializer.trySerialize(field);
+			byte[] v = jedis.hget(key, s);
+			if (v == null) {
+				return null;
+			}
+			V previousValue = valueSerializer.deserialize(v);
+			if (jedis.hdel(key, s) == 0L) {
+				return null;
+			}
+			return previousValue;
+		} catch (ClassCastException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -91,10 +123,20 @@ public class JedisMap<F, V> extends JedisObject implements Map<F, V> {
 
 	@Override
 	public Collection<V> values() {
-		// TODO Auto-generated method stub
-		return null;
+		return getRawValues().stream()
+				.map(s -> valueSerializer.deserialize(s))
+				.collect(Collectors.toList());
 	}
 	
+	private Map<byte[], byte[]> getRawMap() {
+		return jedis.hgetAll(key);
+	}
 	
+	private Set<byte[]> getRawKeys() {
+		return jedis.hkeys(key);
+	}
 	
+	private Collection<byte[]> getRawValues() {
+		return jedis.hvals(key);
+	}
 }

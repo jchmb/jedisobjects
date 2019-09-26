@@ -6,7 +6,7 @@ import redis.clients.jedis.Jedis;
 public class JedisAtom<E> extends JedisObject implements Atom<E> {
 	private final Serializer<E> serializer;
 	
-	public JedisAtom(Jedis jedis, String key, Serializer<E> serializer) {
+	public JedisAtom(Jedis jedis, byte[] key, Serializer<E> serializer) {
 		super(jedis, key);
 		this.serializer = serializer;
 	}

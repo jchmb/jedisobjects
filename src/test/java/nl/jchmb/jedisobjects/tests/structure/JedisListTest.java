@@ -24,7 +24,7 @@ public class JedisListTest extends TestCase {
 	}
 	
 	private JedisList<String> createNewList() {
-		String key = UUID.randomUUID().toString();
+		byte[] key = Serializer.forString().serialize(UUID.randomUUID().toString());
 		JedisList<String> list = new JedisList<>(jedis, key, Serializer.forString());
 		return list;
 	}

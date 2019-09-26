@@ -11,7 +11,7 @@ import redis.clients.jedis.Jedis;
 public class JedisList<E> extends JedisObject implements List<E> {
 	private final Serializer<E> serializer;
 	
-	public JedisList(Jedis jedis, String key, Serializer<E> serializer) {
+	public JedisList(Jedis jedis, byte[] key, Serializer<E> serializer) {
 		super(jedis, key);
 		this.serializer = serializer;
 	}
@@ -29,7 +29,7 @@ public class JedisList<E> extends JedisObject implements List<E> {
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		String[] values = (String[]) c.stream()
+		byte[][] values = (byte[][]) c.stream()
 			.map(e -> serializer.serialize(e))
 			.toArray();
 		return jedis.rpush(key, values) > 0L;
@@ -76,7 +76,7 @@ public class JedisList<E> extends JedisObject implements List<E> {
 		return size() == 0;
 	}
 	
-	private List<String> getRawList() {
+	private List<byte[]> getRawList() {
 		return jedis.lrange(key, 0, -1);
 	}
 

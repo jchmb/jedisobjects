@@ -1,5 +1,7 @@
 package nl.jchmb.jedisobjects.serializer;
 
+import java.nio.charset.Charset;
+
 /**
  * The Serializer<T> can serialize objects of type T to Strings and deserialize from Strings to objects of type T,
  * for the purpose of storing and retrieving values from a Redis database.
@@ -12,27 +14,23 @@ package nl.jchmb.jedisobjects.serializer;
  * @param <T>
  */
 public interface Serializer<T> {
-	public String serialize(T o);
-	public T deserialize(String s);
+	public byte[] serialize(T o);
+	public T deserialize(byte[] s);
 	
 	@SuppressWarnings("unchecked")
-	public default String trySerialize(Object o) throws ClassCastException {
+	public default byte[] trySerialize(Object o) throws ClassCastException {
 		return serialize((T) o);
 	}
 	
 	public static StringSerializer forString() {
-		return StringSerializer.INSTANCE;
+		return forString(Charset.defaultCharset());
+	}
+	
+	public static StringSerializer forString(Charset charset) {
+		return new StringSerializer(charset);
 	}
 	
 	public static IntegerSerializer forInteger() {
-		return IntegerSerializer.INSTANCE;
-	}
-	
-	public static FloatSerializer forFloat() {
-		return FloatSerializer.INSTANCE;
-	}
-	
-	public static BooleanSerializer forBoolean() {
-		return BooleanSerializer.INSTANCE;
+		return new IntegerSerializer();
 	}
 }
