@@ -1,4 +1,4 @@
-package org.jedisobjects.serializer;
+package nl.jchmb.jedisobjects.serializer;
 
 /**
  * The Serializer<T> can serialize objects of type T to Strings and deserialize from Strings to objects of type T,
@@ -22,5 +22,17 @@ public interface Serializer<T> {
 	
 	public static StringSerializer forString() {
 		return StringSerializer.INSTANCE;
+	}
+	
+	public static IntegerSerializer forInteger() {
+		return IntegerSerializer.INSTANCE;
+	}
+	
+	public static FloatSerializer forFloat() {
+		return FloatSerializer.INSTANCE;
+	}
+	
+	public static BooleanSerializer forBoolean() {
+		return BooleanSerializer.INSTANCE;
 	}
 }

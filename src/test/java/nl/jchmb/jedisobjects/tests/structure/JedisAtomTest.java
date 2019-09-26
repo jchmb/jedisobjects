@@ -1,10 +1,10 @@
-package org.jedisobjects.tests.structure;
+package nl.jchmb.jedisobjects.tests.structure;
 
-import org.jedisobjects.serializer.Serializer;
-import org.jedisobjects.structure.JedisAtom;
 import org.junit.Test;
 
 import junit.framework.TestCase;
+import nl.jchmb.jedisobjects.serializer.Serializer;
+import nl.jchmb.jedisobjects.structure.JedisAtom;
 import redis.clients.jedis.Jedis;
 
 public class JedisAtomTest extends TestCase {

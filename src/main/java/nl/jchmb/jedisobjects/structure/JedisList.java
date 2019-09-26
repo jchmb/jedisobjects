@@ -1,12 +1,11 @@
-package org.jedisobjects.structure;
+package nl.jchmb.jedisobjects.structure;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.jedisobjects.serializer.Serializer;
-
+import nl.jchmb.jedisobjects.serializer.Serializer;
 import redis.clients.jedis.Jedis;
 
 public class JedisList<E> extends JedisObject implements List<E> {

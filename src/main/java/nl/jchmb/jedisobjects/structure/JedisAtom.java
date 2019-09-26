@@ -1,7 +1,6 @@
-package org.jedisobjects.structure;
+package nl.jchmb.jedisobjects.structure;
 
-import org.jedisobjects.serializer.Serializer;
-
+import nl.jchmb.jedisobjects.serializer.Serializer;
 import redis.clients.jedis.Jedis;
 
 public class JedisAtom<E> extends JedisObject implements Atom<E> {

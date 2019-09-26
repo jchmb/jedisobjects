@@ -1,12 +1,12 @@
-package org.jedisobjects.tests.structure;
+package nl.jchmb.jedisobjects.tests.structure;
 
 import java.util.UUID;
 
-import org.jedisobjects.serializer.Serializer;
-import org.jedisobjects.structure.JedisList;
 import org.junit.Test;
 
 import junit.framework.TestCase;
+import nl.jchmb.jedisobjects.serializer.Serializer;
+import nl.jchmb.jedisobjects.structure.JedisList;
 import redis.clients.jedis.Jedis;
 
 public class JedisListTest extends TestCase {
