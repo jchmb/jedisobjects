@@ -8,19 +8,28 @@ import junit.framework.TestCase;
 import nl.jchmb.jedisobjects.serializer.Serializer;
 import nl.jchmb.jedisobjects.structure.JedisList;
 import redis.clients.jedis.Jedis;
+import redis.embedded.RedisServer;
 
 public class JedisListTest extends TestCase {
+	private RedisServer mockServer;
 	private Jedis jedis;
 	
 	@Override
 	protected void setUp() throws Exception {
-		jedis = new Jedis();
+		mockServer = RedisServer.builder()
+				.port(6379)
+				.setting("daemonize no")
+				.build();
+		mockServer.start();
+		jedis = new Jedis("localhost", 6379);
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
 		jedis.close();
 		jedis = null;
+		mockServer.stop();
+		mockServer = null;
 	}
 	
 	private JedisList<String> createNewList() {
