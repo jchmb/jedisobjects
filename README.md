@@ -21,7 +21,7 @@ System.out.println(atom.get());
 Managing a Map:
 
 ```java
-Jedis jedis = ...;
+Jedis jedis = ...; // It is assumed that a Jedis instance is given.
 JedisObjects jedisObjects = JedisObjects.createSimple(jedis);
 Map<String, String> map = jedisObjects.getMap("example:map");
 map.put("key1", "value1");
