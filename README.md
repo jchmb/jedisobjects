@@ -12,7 +12,7 @@ Managing a single key-value pair (called Atoms):
 
 ```java
 Jedis jedis = ...; // It is assumed that a Jedis instance is given.
-JedisObjects jedisObjects = JedisObjects.createSimple(jedis);
+JedisObjects<String> jedisObjects = JedisObjects.createSimple(jedis);
 Atom<String> atom = jedisObjects.getAtom("example:atom");
 atom.set("Testing.");
 System.out.println(atom.get());
@@ -22,7 +22,7 @@ Managing a Map:
 
 ```java
 Jedis jedis = ...; // It is assumed that a Jedis instance is given.
-JedisObjects jedisObjects = JedisObjects.createSimple(jedis);
+JedisObjects<String> jedisObjects = JedisObjects.createSimple(jedis);
 Map<String, String> map = jedisObjects.getMap("example:map");
 map.put("key1", "value1");
 map.put("key2", "value2");

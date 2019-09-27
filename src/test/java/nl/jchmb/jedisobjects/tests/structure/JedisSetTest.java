@@ -1,6 +1,10 @@
 package nl.jchmb.jedisobjects.tests.structure;
 
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -84,5 +88,17 @@ public class JedisSetTest extends TestCase {
 		assertFalse(set.contains("element_0"));
 		set.remove("element_1");
 		assertFalse(set.contains("element_1"));
+	}
+	
+	@Test
+	public void test_givenNonEmptySetAndNonEmptyCollection_retainAllWorksAsExpected() {
+		JedisSet<String> set = createFilledSet(5);
+		Collection<String> c = Stream.of("element_1", "element_2", "element_5")
+				.collect(Collectors.toSet());
+		Set<String> expectedSet = Stream.of("element_1", "element_2")
+				.collect(Collectors.toSet());
+		boolean changed = set.retainAll(c);
+		assertTrue(changed);
+		assertEquals(expectedSet, set);
 	}
 }

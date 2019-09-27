@@ -3,6 +3,7 @@ package nl.jchmb.jedisobjects.structure;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import nl.jchmb.jedisobjects.serializer.Serializer;
@@ -87,8 +88,15 @@ public class JedisSet<E> extends JedisObject implements Set<E> {
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		// TODO: optimize
+		boolean changed = false;
+		for (E e : this) {
+			if (!c.contains(e)) {
+				changed = true;
+				remove(e);
+			}
+		}
+		return changed;
 	}
 
 	@Override

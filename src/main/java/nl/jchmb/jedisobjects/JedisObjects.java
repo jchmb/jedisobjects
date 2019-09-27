@@ -2,12 +2,14 @@ package nl.jchmb.jedisobjects;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nl.jchmb.jedisobjects.serializer.Serializer;
 import nl.jchmb.jedisobjects.structure.Atom;
 import nl.jchmb.jedisobjects.structure.JedisAtom;
 import nl.jchmb.jedisobjects.structure.JedisList;
 import nl.jchmb.jedisobjects.structure.JedisMap;
+import nl.jchmb.jedisobjects.structure.JedisSet;
 import nl.jchmb.jedisobjects.structure.Watchable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
@@ -31,6 +33,10 @@ public class JedisObjects<K> {
 	
 	public <F, V> Map<F, V> getMap(K key, Serializer<F> fieldSerializer, Serializer<V> valueSerializer) {
 		return new JedisMap<F, V>(jedis, keySerializer.serialize(key), fieldSerializer, valueSerializer);
+	}
+	
+	public <E> Set<E> getSet(K key, Serializer<E> serializer) {
+		return new JedisSet<>(jedis, keySerializer.serialize(key), serializer);
 	}
 	
 	public Transaction multi() {
