@@ -1,5 +1,6 @@
 package nl.jchmb.jedisobjects.structure;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -106,14 +107,35 @@ public class JedisSet<E> extends JedisObject implements Set<E> {
 
 	@Override
 	public Object[] toArray() {
-		return jedis.smembers(key)
+		return jedis.smembers(key).stream()
+				.map(serializer::deserialize)
 				.toArray();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T[] toArray(T[] a) {
-		// TODO Auto-generated method stub
-		return null;
+		if (a == null) {
+			throw new NullPointerException();
+		}
+		int n = size();
+		if (n > a.length) {
+			a = (T[]) Array.newInstance(a.getClass(), n);
+		}
+		int i = 0;
+		for (Object o : this) {
+			try {
+				a[i++] = (T) o;
+			} catch (ClassCastException exception) {
+				ArrayStoreException newException = new ArrayStoreException();
+				newException.initCause(exception);
+				throw newException;
+			}
+		}
+		if (a.length > n) {
+			a[n] = null;
+		}
+		return a;
 	}
 
 }
