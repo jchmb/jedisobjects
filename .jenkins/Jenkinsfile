@@ -1,0 +1,40 @@
+pipeline {
+    agent {
+        docker {
+            image 'gradle:jdk8-alpine'
+        }
+    }
+
+    triggers {
+        pollSCM('*/5 * * * 1-5')
+    }
+
+    stages {
+        stage ('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building..'
+                sh './gradlew --no-daemon build'
+            }
+            post {
+                always {
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'dist/*whl', fingerprint: true
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+            }
+        }
+    }
+}
