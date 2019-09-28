@@ -22,7 +22,7 @@ pipeline {
             }
             post {
                 always {
-                    archiveArtifacts allowEmptyArchive: true, artifacts: 'dist/*whl', fingerprint: true
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'build/libs/jedisobjects*.jar', fingerprint: true
                 }
             }
         }
