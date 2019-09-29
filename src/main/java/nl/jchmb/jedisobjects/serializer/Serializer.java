@@ -33,4 +33,8 @@ public interface Serializer<T> {
 	public static IntegerSerializer forInteger() {
 		return new IntegerSerializer();
 	}
+	
+	public static DefaultSerializer<?> forSerializable() {
+		return new DefaultSerializer<>();
+	}
 }

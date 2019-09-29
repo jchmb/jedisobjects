@@ -1,5 +1,10 @@
 package nl.jchmb.jedisobjects.tests.structure;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -38,6 +43,14 @@ public class JedisListTest extends TestCase {
 		return list;
 	}
 	
+	private JedisList<String> createFilledList(int n) {
+		JedisList<String> list = createNewList();
+		for (int i = 0; i < n; i++) {
+			list.add("element_" + i);
+		}
+		return list;
+	}
+	
 	@Test
 	public void test_isEmpty_whenCreated() {
 		JedisList<String> list = createNewList();
@@ -63,11 +76,39 @@ public class JedisListTest extends TestCase {
 	}
 	
 	@Test
+	public void test_whenElementsAreAdded_thenOrderIsPreserved() {
+		JedisList<String> list = createFilledList(3);
+		assertEquals(list.get(0), "element_0");
+		assertEquals(list.get(1), "element_1");
+		assertEquals(list.get(2), "element_2");
+	}
+	
+	@Test
 	public void test_isEmpty_afterClear() {
 		JedisList<String> list = createNewList();
 		list.add("dummyValue");
 		assertFalse(list.isEmpty());
 		list.clear();
 		assertTrue(list.isEmpty());
+	}
+	
+	@Test
+	public void test_givenNonEmptyList_listIteratorReturnsElementsInOrder() {
+		JedisList<String> list = createFilledList(4);
+		List<String> expected = Arrays.asList("element_0", "element_1", "element_2", "element_3");
+		ListIterator<String> listIterator = list.listIterator();
+		int i = 0;
+		while (listIterator.hasNext()) {
+			assertEquals(listIterator.next(), expected.get(i));
+			i++;
+		}
+	}
+	
+	@Test
+	public void test_whenElementIsInsertedAtIndex_allPreviousElementsFromThatIndexAreShiftedToTheRight() {
+		JedisList<String> list = createFilledList(3);
+		list.add(1, "x");
+		List<String> expected = Arrays.asList("element_0", "x", "element_1", "element_2");
+		assertEquals(expected, list);
 	}
 }

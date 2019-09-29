@@ -10,7 +10,6 @@ import java.io.Serializable;
 import nl.jchmb.jedisobjects.serializer.exception.SerializerException;
 
 public class DefaultSerializer<T extends Serializable> implements Serializer<T> {
-
 	@Override
 	public byte[] serialize(T o) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
