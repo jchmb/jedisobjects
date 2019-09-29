@@ -8,6 +8,7 @@
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'maven'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -26,5 +27,24 @@ dependencies {
     // https://mvnrepository.com/artifact/redis.clients/jedis
 	compile group: 'redis.clients', name: 'jedis', version: '3.1.0'
     
+}
+
+task createPom << {
+    pom {
+        project {
+            groupId 'nl.jchmb.jedisobjects'
+            artifactId 'jedisobjects'
+            version '0.1.0'
+
+            inceptionYear '2019'
+            licenses {
+                license {
+                    name 'MIT'
+                    url 'https://github.com/jchmb/jedisobjects/blob/master/LICENSE'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("pom.xml")
 }
 
